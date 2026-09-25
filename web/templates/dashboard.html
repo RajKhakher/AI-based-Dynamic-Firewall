@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Firewall · Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>
+    window.CSRF = "{{ csrf }}";
+    window.HAS_ENGINE = {{ 'true' if has_engine else 'false' }};
+    window.MUST_CHANGE = {{ 'true' if must_change else 'false' }};
+  </script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand-row">
+    <span class="brand-mark">▮▮</span>
+    <b>Dynamic Firewall</b>
+    <span id="modeBadge" class="badge">…</span>
+  </div>
+  <div class="top-actions">
+    <div class="mode-switch" title="Monitor = watch only. Enforce = actually block.">
+      <button id="btnMonitor" class="seg">Monitor</button>
+      <button id="btnEnforce" class="seg">Enforce</button>
+    </div>
+    <span class="muted">{{ user }}</span>
+    <a class="btn ghost" href="{{ url_for('logout') }}">Log out</a>
+  </div>
+</header>
+
+{% if not has_engine %}
+<div class="banner warn">Dashboard is in view-only mode (engine not running). Start with <code>sudo python3 run.py</code> for live control.</div>
+{% endif %}
+
+<div id="pwBanner" class="banner warn" style="display:none">
+  You're using the default password. <button id="pwChange" class="btn small">Change it now</button>
+</div>
+
+<main class="wrap">
+  <!-- Stat cards -->
+  <section class="cards">
+    <div class="card stat"><div class="stat-label">Packets seen</div><div id="sTotal" class="stat-value">0</div></div>
+    <div class="card stat"><div class="stat-label">Allowed</div><div id="sAllowed" class="stat-value good">0</div></div>
+    <div class="card stat"><div class="stat-label">Blocked / denied</div><div id="sDenied" class="stat-value bad">0</div></div>
+    <div class="card stat"><div class="stat-label">Alerts</div><div id="sAlerts" class="stat-value warn">0</div></div>
+    <div class="card stat"><div class="stat-label">Active blocks</div><div id="sBlocked" class="stat-value">0</div></div>
+    <div class="card stat"><div class="stat-label">Live connections</div><div id="sConns" class="stat-value">0</div></div>
+  </section>
+
+  <section class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>Traffic (packets/sec)</h3><span class="muted small">last 60s</span></div>
+      <canvas id="ppsChart" height="90"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>By protocol</h3></div>
+      <canvas id="protoChart" height="90"></canvas>
+    </div>
+  </section>
+
+  <section class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>Top sources</h3><span class="muted small">most packets</span></div>
+      <table class="mini"><tbody id="talkers"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Top destination ports</h3></div>
+      <table class="mini"><tbody id="targets"></tbody></table>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <section class="card">
+    <div class="tabs">
+      <button class="tab active" data-tab="events">Live events</button>
+      <button class="tab" data-tab="alerts">Alerts</button>
+      <button class="tab" data-tab="blocks">Blocked IPs</button>
+      <button class="tab" data-tab="rules">Rules</button>
+      <button class="tab" data-tab="ai">AI model</button>
+    </div>
+
+    <!-- Events -->
+    <div class="tabpane active" id="tab-events">
+      <table class="data">
+        <thead><tr><th>Time</th><th>Dir</th><th>Proto</th><th>Source</th><th>→ Destination</th><th>Len</th><th>Action</th><th>Reason</th></tr></thead>
+        <tbody id="eventsBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Alerts -->
+    <div class="tabpane" id="tab-alerts">
+      <table class="data">
+        <thead><tr><th>Time</th><th>Type</th><th>Source</th><th>Severity</th><th>Detail</th><th>Action taken</th></tr></thead>
+        <tbody id="alertsBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Blocks -->
+    <div class="tabpane" id="tab-blocks">
+      <div class="row gap">
+        <input id="blockIp" placeholder="IP address to block, e.g. 203.0.113.5">
+        <input id="blockSecs" type="number" placeholder="seconds (0 = permanent)" style="max-width:200px">
+        <button id="btnBlock" class="btn primary">Block</button>
+      </div>
+      <h4 class="muted">Currently blocked</h4>
+      <table class="data">
+        <thead><tr><th>IP</th><th>Reason</th><th>Source</th><th>Age (s)</th><th>Remaining</th><th></th></tr></thead>
+        <tbody id="blocksBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Rules -->
+    <div class="tabpane" id="tab-rules">
+      <details class="addbox">
+        <summary>+ Add a rule</summary>
+        <div class="rule-form">
+          <select id="rAction"><option value="deny">deny (drop silently)</option><option value="reject">reject (drop + notify)</option><option value="allow">allow</option></select>
+          <select id="rDir"><option value="in">inbound</option><option value="out">outbound</option><option value="any">any direction</option></select>
+          <select id="rProto"><option value="any">any proto</option><option value="tcp">tcp</option><option value="udp">udp</option><option value="icmp">icmp</option></select>
+          <input id="rSrc" placeholder="source IP/CIDR (any)">
+          <input id="rDst" placeholder="dest IP/CIDR (any)">
+          <input id="rDport" placeholder="dest port(s) e.g. 22 or 1000-2000">
+          <input id="rComment" placeholder="comment">
+          <button id="btnAddRule" class="btn primary">Add</button>
+        </div>
+      </details>
+      <table class="data">
+        <thead><tr><th>#</th><th>Action</th><th>Dir</th><th>Proto</th><th>Source</th><th>Dest</th><th>Dports</th><th>Comment</th><th></th></tr></thead>
+        <tbody id="rulesBody"></tbody>
+      </table>
+    </div>
+
+    <!-- AI -->
+    <div class="tabpane" id="tab-ai">
+      <div class="ai-explain muted">
+        The AI learns what <b>your</b> normal traffic looks like, then flags anything unusual —
+        no attack data needed. Step 1: click <b>Start learning</b> and use the machine normally for a
+        few minutes. Step 2: click <b>Train</b>. Step 3: it now scores live traffic.
+      </div>
+      <div class="row gap ai-controls">
+        <button id="btnLearn" class="btn">Start learning</button>
+        <button id="btnStopLearn" class="btn ghost">Stop</button>
+        <button id="btnTrain" class="btn primary">Train model</button>
+        <label class="switch-row"><input type="checkbox" id="autoBlock"> Auto-block anomalies</label>
+      </div>
+      <div id="aiStatus" class="ai-status"></div>
+    </div>
+  </section>
+  <p class="foot muted small">AI-Based Dynamic Firewall System · rules are applied top-to-bottom, first match wins · this dashboard is local to your machine.</p>
+</main>
+
+<!-- Chart.js is vendored locally so the dashboard works fully offline (e.g. on an air-gapped VM). -->
+<script src="{{ url_for('static', filename='chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

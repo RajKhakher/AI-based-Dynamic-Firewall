@@ -1,0 +1,97 @@
+/* AI-Based Dynamic Firewall System — dashboard styles.
+   A calm dark theme suited to a security console. */
+:root{
+  --bg:#0e1116; --panel:#171b22; --panel-2:#1e232c; --line:#2a2f3a;
+  --ink:#e7ecf3; --muted:#8a93a2; --brand:#4f8cff; --good:#39d98a;
+  --bad:#ff5c7c; --warn:#ffb020; --chip:#232935;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h3,h4{margin:0}
+a{color:var(--brand);text-decoration:none}
+code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.good{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+
+/* login */
+.login-page{display:grid;place-items:center;min-height:100vh}
+.login-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:28px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.brand{text-align:center;margin-bottom:18px}
+.brand-mark{color:var(--brand);letter-spacing:2px;font-weight:700}
+.login-card h1{font-size:20px;margin-top:6px}
+.login-card label{display:block;margin:12px 0;font-size:13px;color:var(--muted)}
+.login-card input{width:100%;margin-top:5px;padding:10px;border-radius:8px;
+  border:1px solid var(--line);background:var(--panel-2);color:var(--ink)}
+.btn{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);
+  padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px}
+.btn:hover{border-color:var(--brand)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.ghost{background:transparent}
+.btn.small{padding:4px 10px;font-size:12px}
+.btn.block{width:100%;margin-top:8px}
+.alert.error{background:rgba(255,92,124,.12);border:1px solid var(--bad);
+  color:var(--bad);padding:8px 10px;border-radius:8px;font-size:13px}
+
+/* layout */
+.topbar{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:5}
+.brand-row{display:flex;align-items:center;gap:10px}
+.top-actions{display:flex;align-items:center;gap:14px}
+.badge{background:var(--chip);padding:3px 10px;border-radius:20px;font-size:12px}
+.badge.enforce{background:rgba(255,92,124,.18);color:var(--bad)}
+.badge.monitor{background:rgba(79,140,255,.18);color:var(--brand)}
+.mode-switch{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg{background:var(--panel-2);color:var(--muted);border:none;padding:6px 14px;cursor:pointer;font-size:13px}
+.seg.on{background:var(--brand);color:#fff}
+.wrap{max-width:1180px;margin:0 auto;padding:20px}
+.banner{padding:10px 16px;border-radius:0;text-align:center;font-size:13px}
+.banner.warn{background:rgba(255,176,32,.12);color:var(--warn);border-bottom:1px solid var(--line)}
+
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card.stat{text-align:center}
+.stat-label{color:var(--muted);font-size:12px}
+.stat-value{font-size:26px;font-weight:700;margin-top:4px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+
+.mini{width:100%;border-collapse:collapse}
+.mini td{padding:5px 4px;border-bottom:1px solid var(--line);font-size:13px}
+.mini td:last-child{text-align:right;color:var(--muted)}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;flex-wrap:wrap}
+.tab{background:none;border:none;color:var(--muted);padding:8px 14px;cursor:pointer;
+  border-bottom:2px solid transparent;font-size:13px}
+.tab.active{color:var(--ink);border-bottom-color:var(--brand)}
+.tabpane{display:none} .tabpane.active{display:block}
+
+table.data{width:100%;border-collapse:collapse;font-size:12.5px}
+table.data th{text-align:left;color:var(--muted);font-weight:500;padding:7px 8px;
+  border-bottom:1px solid var(--line);position:sticky;top:56px;background:var(--panel)}
+table.data td{padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.pill{padding:2px 8px;border-radius:12px;font-size:11px}
+.pill.allow{background:rgba(57,217,138,.15);color:var(--good)}
+.pill.deny,.pill.reject{background:rgba(255,92,124,.15);color:var(--bad)}
+.pill.sev-high{background:rgba(255,92,124,.15);color:var(--bad)}
+.pill.sev-medium{background:rgba(255,176,32,.15);color:var(--warn)}
+.pill.sev-low{background:var(--chip);color:var(--muted)}
+
+.row{display:flex;align-items:center}
+.row.gap{gap:8px;flex-wrap:wrap;margin-bottom:14px}
+input,select{background:var(--panel-2);border:1px solid var(--line);color:var(--ink);
+  padding:8px 10px;border-radius:8px;font-size:13px}
+.addbox{margin-bottom:12px}
+.addbox summary{cursor:pointer;color:var(--brand);margin-bottom:8px}
+.rule-form{display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:var(--panel-2);border-radius:8px}
+.switch-row{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.ai-explain{padding:12px;background:var(--panel-2);border-radius:8px;margin-bottom:14px;font-size:13px}
+.ai-controls{margin-bottom:14px}
+.ai-status{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--panel-2);
+  padding:12px;border-radius:8px;white-space:pre-wrap;color:var(--muted)}
+.foot{text-align:center;margin-top:24px}
+.link-danger{color:var(--bad);cursor:pointer}
+@media(max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:1fr}}

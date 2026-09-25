@@ -1,0 +1,16 @@
+# Runtime data (created when the firewall runs)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/config.json
+data/rules.json
+data/users.json
+data/model.pkl
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/

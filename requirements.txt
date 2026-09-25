@@ -1,0 +1,14 @@
+# AI-Based Dynamic Firewall System — Python dependencies.
+#
+# System packages needed first (Debian/Ubuntu/Kali):
+#   sudo apt install iptables ipset libnetfilter-queue-dev python3-dev build-essential
+#
+# Then:  pip install -r requirements.txt
+
+NetfilterQueue>=1.1.0    # receive packets from the kernel and give verdicts (accept/drop)
+scapy>=2.5.0             # packet building/parsing helper (used in tests and tooling)
+scikit-learn>=1.3.0     # Isolation Forest for unsupervised anomaly detection
+numpy>=1.24.0           # numerical arrays for the model
+joblib>=1.3.0           # save/load the trained model
+Flask>=3.0.0            # the dashboard web server
+Werkzeug>=3.0.0         # password hashing for dashboard login
