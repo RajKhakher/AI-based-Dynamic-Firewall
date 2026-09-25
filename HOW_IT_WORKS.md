@@ -25,23 +25,15 @@ different ways of deciding *which* packets to allow and which to block.
 
 ---
 
-## 2. Why the earlier version wasn't a real firewall
+## 2. What makes this a real firewall
 
-The earlier version of this project didn't actually guard the packet path. It
-had a function that **made up** fake attacks using a random-number generator:
+The important property of this system is that it works on **real network
+traffic**. Real packets from the real network are inspected and really blocked —
+nothing is invented or made up inside the program. Every decision the firewall
+makes is about an actual packet that actually arrived, and when it blocks
+something, that traffic genuinely stops.
 
-```python
-fake_ip = f"192.168.1.{random.randint(1,255)}"   # a made-up address
-threat_score = random.randint(50, 100)            # a made-up score
-```
-
-The dashboard then displayed those made-up entries. No real packet was ever
-inspected or blocked. It also had a machine-learning model that was "trained" on
-eight rows of numbers typed into the code by hand, so it had never seen real
-traffic and couldn't meaningfully classify anything.
-
-This version throws all of that away. Here, **real packets from the real network
-are inspected and really blocked.** Nothing is invented inside the program.
+The rest of this document explains, step by step, how that happens.
 
 ---
 
@@ -239,15 +231,16 @@ block them, and even if you type one into the manual-block box by mistake.
 
 ## 9. The AI part, done honestly: `ai.py`
 
-This deserves care, because "AI firewall" is easy to fake (as the old version
-did). Here's the honest version and why it's the right design.
+This deserves care, because the term "AI firewall" is easy to throw around
+without real substance. Here's how the AI actually works and why this is the
+right design.
 
 ### The problem with a normal classifier
 
 The obvious idea is: train a model to tell "attack" from "normal". But to do
 that you need lots of **labelled examples of real attacks**, and we don't have
-those. Inventing fake attacks (what the old code did) just teaches the model your
-fakes — it learns nothing about reality.
+those. Inventing fake attacks to train on just teaches the model your fakes — it
+learns nothing about reality.
 
 ### The solution: learn "normal", flag the unusual
 
@@ -349,7 +342,7 @@ the running engine and refreshes a few times a second, showing live counts, a
 traffic chart, the busiest sources and ports, a live feed of decisions, alerts,
 the block list, the rules, and the AI controls.
 
-Security basics the old version lacked are included here:
+Sensible security basics are built in:
 
 - **Login required** for every page and API call.
 - **Passwords are hashed**, never stored as plain text.

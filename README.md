@@ -4,19 +4,12 @@ A **real, working host firewall** for Linux, written in Python, with a live web
 dashboard and an AI layer that learns your normal traffic and flags what doesn't
 fit.
 
-Unlike a demo that only *pretends* to see attacks, this version sits in the real
-packet path: the Linux kernel hands it **every** packet and this program decides,
-packet by packet, whether to **allow** or **block** it. You can test it with
-real traffic — either from a second device, or on a single machine using the
-built-in lab (see [Demo](#demo)).
-
-> **What changed from the earlier version?** The previous code generated fake
-> attacks with `random` and only ever filtered those fakes; its machine-learning
-> model was trained on eight hand-typed rows; and the dashboard/templates were
-> empty files. This version removes all of that and replaces it with a genuine
-> packet-filtering engine, real detection, an unsupervised AI model, and a
-> complete dashboard. See [`HOW_IT_WORKS.md`](HOW_IT_WORKS.md) for the full
-> explanation in plain language.
+It sits in the real packet path: the Linux kernel hands it **every** packet and
+this program decides, packet by packet, whether to **allow** or **block** it. You
+can test it with real traffic — either from a second device, or on a single
+machine using the built-in lab (see [Demo](#demo)). See
+[`HOW_IT_WORKS.md`](HOW_IT_WORKS.md) for a full plain-language explanation of how
+every part works.
 
 ---
 

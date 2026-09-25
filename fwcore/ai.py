@@ -1,16 +1,14 @@
 """
 ai.py - the "AI" part, done honestly.
 
-The old version of this project trained a classifier on eight hand-typed rows
-and then never saw a real attack, so its "AI" was meaningless. We replace it
-with something that is both real and appropriate for a firewall: an
+The AI here is both real and appropriate for a firewall: an
 **unsupervised anomaly detector**.
 
 Why unsupervised?
 -----------------
 To train a normal (supervised) classifier you need labelled examples of attacks.
-We don't have real attacks, and inventing fake ones just teaches the model your
-fakes. Instead we learn what *your* normal traffic looks like and then flag
+We don't have real attacks, and inventing fake ones would just teach the model
+those fakes. Instead we learn what *your* normal traffic looks like and then flag
 anything that doesn't fit. This needs no attack data at all - only the ordinary
 traffic your machine already sees.
 

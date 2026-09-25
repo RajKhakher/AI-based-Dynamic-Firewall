@@ -4,7 +4,7 @@ server.py - the Flask dashboard and its JSON API.
 The dashboard is how you watch and control the firewall in a browser. It talks
 to the running engine directly (same process), so everything is live.
 
-Security basics that the old version was missing:
+Security basics that are built in:
   * login required for every page and API call
   * passwords stored hashed, not in plain text (see auth.py)
   * a random secret key each run, so sessions can't be forged across restarts
